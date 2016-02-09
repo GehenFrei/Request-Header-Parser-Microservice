@@ -1,9 +1,23 @@
-var express = require('express');
-var router = express.Router();
+'use strict';
 
-/* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
-});
 
-module.exports = router;
+module.exports = function (app) {
+
+      
+   app.route('/api/whoami')
+      .get(function (req, res) {
+         var ipAdress = req.headers['x-forwarded-for'];
+         var language =  req.headers['accept-language'].split(",")[0];
+         var userAgent = req.headers['user-agent'];
+         userAgent = userAgent.substring(userAgent.indexOf("(") + 1, userAgent.indexOf(")"));
+         res.json({"ipaddress": ipAdress,
+                   "language": language,
+                   "software": userAgent
+            });
+      });
+      
+   app.route("*")
+      .get(function(req, res) {
+          res.sendStatus(404);
+      })
+};
